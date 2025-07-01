@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade Tracker & GPA Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .controls {
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-left: auto;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            min-width: 120px;
+        }
+
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 12px;
+            text-align: left;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e9ecef;
+            vertical-align: middle;
+        }
+
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .honors { background-color: #fff3cd; }
+        .ap { background-color: #f8d7da; }
+        .on-level { background-color: #d1ecf1; }
+
+        .grade-a { background-color: #d4edda; }
+        .grade-b { background-color: #fff3cd; }
+        .grade-c { background-color: #ffeaa7; }
+        .grade-d { background-color: #fdcb6e; }
+        .grade-f { background-color: #fab1a0; }
+
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .delete-btn {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background: #ff3742;
+            transform: scale(1.05);
+        }
+
+        .subject-filter {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            animation: modalSlide 0.3s ease;
+        }
+
+        @keyframes modalSlide {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .stats {
+                margin-left: 0;
+                justify-content: center;
+            }
+
+            .stat-card {
+                min-width: auto;
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Grade Tracker & GPA Calculator</h1>
+            <p>Track your academic progress with style</p>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-success" onclick="openModal()">➕ Add Course</button>
+            <button class="btn" onclick="clearAll()">🗑️ Clear All</button>
+            <button class="btn" onclick="exportData()">📊 Export Data</button>
+            
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-value" id="weightedGPA">0.00</div>
+                    <div class="stat-label">Weighted GPA</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="unweightedGPA">0.00</div>
+                    <div class="stat-label">Unweighted GPA</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalCourses">0</div>
+                    <div class="stat-label">Total Courses</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <div class="subject-filter">
+                <button class="filter-btn active" onclick="filterBySubject('all')">All</button>
+                <button class="filter-btn" onclick="filterBySubject('English')">English</button>
+                <button class="filter-btn" onclick="filterBySubject('Math')">Math</button>
+                <button class="filter-btn" onclick="filterBySubject('Science')">Science</button>
+                <button class="filter-btn" onclick="filterBySubject('Social Studies')">Social Studies</button>
+                <button class="filter-btn" onclick="filterBySubject('Foreign Lang')">Foreign Lang</button>
+            </div>
+
+            <table id="gradesTable">
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th>Weight</th>
+                        <th>Semester</th>
+                        <th>Grade</th>
+                        <th>Percentage</th>
+                        <th>Weighted GPA</th>
+                        <th>Max GPA</th>
+                        <th>Unweighted GPA</th>
+                        <th>Category</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="gradesBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="courseModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Add New Course</h2>
+            <form id="courseForm">
+                <div class="form-group">
+                    <label for="courseName">Course Name:</label>
+                    <input type="text" id="courseName" required>
+                </div>
+                <div class="form-group">
+                    <label for="courseWeight">Weight:</label>
+                    <select id="courseWeight" required>
+                        <option value="Honors">Honors</option>
+                        <option value="AP">AP</option>
+                        <option value="On-Level">On-Level</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="courseSemester">Semester:</label>
+                    <select id="courseSemester" required>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="courseGrade">Grade:</label>
+                    <input type="number" id="courseGrade" min="0" max="100" required>
+                </div>
+                <div class="form-group">
+                    <label for="coursePercentage">Percentage:</label>
+                    <input type="number" id="coursePercentage" min="0" max="100" required>
+                </div>
+                <div class="form-group">
+                    <label for="courseCategory">Category:</label>
+                    <select id="courseCategory" required>
+                        <option value="English">English</option>
+                        <option value="Math">Math</option>
+                        <option value="Science">Science</option>
+                        <option value="Social Studies">Social Studies</option>
+                        <option value="Foreign Lang">Foreign Lang</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-success">Add Course</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let courses = [];
+        let currentFilter = 'all';
+
+        // Initialize with sample data
+        const sampleData = [
+            {id: 1, name: "GT Humanities", weight: "Honors", semester: 1, grade: 9, percentage: 89, category: "English"},
+            {id: 2, name: "GT Humanities", weight: "Honors", semester: 2, grade: 9, percentage: 96, category: "English"},
+            {id: 3, name: "English 2", weight: "Honors", semester: 1, grade: 10, percentage: 99, category: "English"},
+            {id: 4, name: "English 2", weight: "Honors", semester: 2, grade: 10, percentage: 99, category: "English"},
+            {id: 5, name: "Algebra 1", weight: "Honors", semester: 1, grade: 7, percentage: 100, category: "Math"},
+            {id: 6, name: "Algebra 1", weight: "Honors", semester: 2, grade: 7, percentage: 100, category: "Math"},
+            {id: 7, name: "Geometry", weight: "Honors", semester: 1, grade: 8, percentage: 96, category: "Math"},
+            {id: 8, name: "Geometry", weight: "Honors", semester: 2, grade: 8, percentage: 98, category: "Math"},
+            {id: 9, name: "Algebra 2", weight: "Honors", semester: 1, grade: 9, percentage: 98, category: "Math"},
+            {id: 10, name: "Algebra 2", weight: "Honors", semester: 2, grade: 9, percentage: 99, category: "Math"},
+            {id: 11, name: "Precalculus", weight: "AP", semester: 1, grade: 10, percentage: 99, category: "Math"},
+            {id: 12, name: "Precalculus", weight: "AP", semester: 2, grade: 10, percentage: 100, category: "Math"},
+            {id: 13, name: "Statistics", weight: "AP", semester: 1, grade: 10, percentage: 94, category: "Math"},
+            {id: 14, name: "Statistics", weight: "AP", semester: 2, grade: 10, percentage: 95, category: "Math"},
+            {id: 15, name: "Human Geography", weight: "AP", semester: 1, grade: 9, percentage: 95, category: "Social Studies"},
+            {id: 16, name: "Human Geography", weight: "AP", semester: 2, grade: 9, percentage: 98, category: "Social Studies"},
+            {id: 17, name: "GT Humanities", weight: "AP", semester: 1, grade: 10, percentage: 93, category: "Social Studies"},
+            {id: 18, name: "GT Humanities", weight: "AP", semester: 2, grade: 10, percentage: 98, category: "Social Studies"},
+            {id: 19, name: "Biology", weight: "Honors", semester: 1, grade: 9, percentage: 96, category: "Science"},
+            {id: 20, name: "Biology", weight: "Honors", semester: 2, grade: 9, percentage: 97, category: "Science"},
+            {id: 21, name: "Chemistry", weight: "Honors", semester: 1, grade: 10, percentage: 99, category: "Science"},
+            {id: 22, name: "Chemistry", weight: "Honors", semester: 2, grade: 10, percentage: 98, category: "Science"},
+            {id: 23, name: "Spanish 1", weight: "On-Level", semester: 1, grade: 7, percentage: 96, category: "Foreign Lang"},
+            {id: 24, name: "Spanish 1", weight: "On-Level", semester: 2, grade: 8, percentage: 97, category: "Foreign Lang"}
+        ];
+
+        courses = [...sampleData];
+
+        function calculateGPA(grade, weight) {
+            let baseGPA = 0;
+            if (grade >= 90) baseGPA = 4.0;
+            else if (grade >= 80) baseGPA = 3.0;
+            else if (grade >= 70) baseGPA = 2.0;
+            else if (grade >= 60) baseGPA = 1.0;
+            else baseGPA = 0.0;
+
+            let weightedGPA = baseGPA;
+            if (weight === 'Honors') weightedGPA += 0.5;
+            else if (weight === 'AP') weightedGPA += 1.0;
+
+            return { weighted: weightedGPA, unweighted: baseGPA };
+        }
+
+        function getMaxGPA(weight) {
+            if (weight === 'Honors') return 4.5;
+            else if (weight === 'AP') return 5.0;
+            else return 4.0;
+        }
+
+        function getGradeClass(percentage) {
+            if (percentage >= 90) return 'grade-a';
+            else if (percentage >= 80) return 'grade-b';
+            else if (percentage >= 70) return 'grade-c';
+            else if (percentage >= 60) return 'grade-d';
+            else return 'grade-f';
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('gradesBody');
+            tbody.innerHTML = '';
+
+            let filteredCourses = courses;
+            if (currentFilter !== 'all') {
+                filteredCourses = courses.filter(course => course.category === currentFilter);
+            }
+
+            filteredCourses.forEach(course => {
+                const gpa = calculateGPA(course.percentage, course.weight);
+                const maxGPA = getMaxGPA(course.weight);
+                const gradeClass = getGradeClass(course.percentage);
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${course.name}</td>
+                    <td><span class="${course.weight.toLowerCase()}">${course.weight}</span></td>
+                    <td>${course.semester}</td>
+                    <td>${course.grade}</td>
+                    <td class="${gradeClass}">${course.percentage}</td>
+                    <td>${gpa.weighted.toFixed(1)}</td>
+                    <td>${maxGPA}</td>
+                    <td>${gpa.unweighted.toFixed(1)}</td>
+                    <td>${course.category}</td>
+                    <td><button class="delete-btn" onclick="deleteCourse(${course.id})">Delete</button></td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            updateStats();
+        }
+
+        function updateStats() {
+            if (courses.length === 0) {
+                document.getElementById('weightedGPA').textContent = '0.00';
+                document.getElementById('unweightedGPA').textContent = '0.00';
+                document.getElementById('totalCourses').textContent = '0';
+                return;
+            }
+
+            let totalWeighted = 0;
+            let totalUnweighted = 0;
+
+            courses.forEach(course => {
+                const gpa = calculateGPA(course.percentage, course.weight);
+                totalWeighted += gpa.weighted;
+                totalUnweighted += gpa.unweighted;
+            });
+
+            const avgWeighted = totalWeighted / courses.length;
+            const avgUnweighted = totalUnweighted / courses.length;
+
+            document.getElementById('weightedGPA').textContent = avgWeighted.toFixed(2);
+            document.getElementById('unweightedGPA').textContent = avgUnweighted.toFixed(2);
+            document.getElementById('totalCourses').textContent = courses.length;
+        }
+
+        function openModal() {
+            document.getElementById('courseModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('courseModal').style.display = 'none';
+            document.getElementById('courseForm').reset();
+        }
+
+        function addCourse(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const newCourse = {
+                id: Date.now(),
+                name: document.getElementById('courseName').value,
+                weight: document.getElementById('courseWeight').value,
+                semester: parseInt(document.getElementById('courseSemester').value),
+                grade: parseInt(document.getElementById('courseGrade').value),
+                percentage: parseInt(document.getElementById('coursePercentage').value),
+                category: document.getElementById('courseCategory').value
+            };
+
+            courses.push(newCourse);
+            renderTable();
+            closeModal();
+        }
+
+        function deleteCourse(id) {
+            if (confirm('Are you sure you want to delete this course?')) {
+                courses = courses.filter(course => course.id !== id);
+                renderTable();
+            }
+        }
+
+        function clearAll() {
+            if (confirm('Are you sure you want to clear all courses?')) {
+                courses = [];
+                renderTable();
+            }
+        }
+
+        function filterBySubject(subject) {
+            currentFilter = subject;
+            
+            // Update active button
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            renderTable();
+        }
+
+        function exportData() {
+            const dataStr = JSON.stringify(courses, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = 'grade_data.json';
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        }
+
+        // Event listeners
+        document.getElementById('courseForm').addEventListener('submit', addCourse);
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('courseModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // Initialize the table
+        renderTable();
+    </script>
+</body>
+</html>
