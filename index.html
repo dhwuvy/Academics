@@ -323,6 +323,8 @@
             <button class="btn btn-success" onclick="openModal()">➕ Add Course</button>
             <button class="btn" onclick="clearAll()">🗑️ Clear All</button>
             <button class="btn" onclick="exportData()">📊 Export Data</button>
+            <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(event)">
+            <button class="btn" onclick="document.getElementById('importFile').click()">📥 Import Data</button>
             
             <div class="stats">
                 <div class="stat-card">
@@ -771,6 +773,29 @@
         linkElement.setAttribute('href', dataUri);
         linkElement.setAttribute('download', exportFileDefaultName);
         linkElement.click();
+    }
+
+    function importData(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const importedCourses = JSON.parse(e.target.result);
+            if (Array.isArray(importedCourses)) {
+                courses = importedCourses;
+                saveCoursesToLocalStorage();
+                renderTable();
+                alert('Import successful!');
+            } else {
+                alert('Invalid file format. Must be an array of courses.');
+            }
+        } catch (err) {
+            alert('Error importing file: ' + err.message);
+        }
+    };
+    reader.readAsText(file);
     }
 
     document.addEventListener('DOMContentLoaded', function () {
