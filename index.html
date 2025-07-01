@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Grade Tracker & GPA Calculator</title>
     <style>
         * {
@@ -23,7 +23,7 @@
             margin: 0 auto;
             background: white;
             border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             overflow: hidden;
         }
 
@@ -37,7 +37,7 @@
         .header h1 {
             font-size: 2.5em;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .controls {
@@ -59,12 +59,12 @@
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
         }
 
         .btn-success {
@@ -86,7 +86,7 @@
             padding: 15px 25px;
             border-radius: 15px;
             text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             min-width: 120px;
         }
 
@@ -113,7 +113,7 @@
             background: white;
             border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
         th {
@@ -162,17 +162,40 @@
             background-color: #f8f9fa;
         }
 
-        .honors { background-color: #fff3cd; }
-        .ap { background-color: #f8d7da; }
-        .on-level { background-color: #d1ecf1; }
+        .honors {
+            background-color: #fff3cd;
+        }
 
-        .grade-a { background-color: #d4edda; }
-        .grade-b { background-color: #fff3cd; }
-        .grade-c { background-color: #ffeaa7; }
-        .grade-d { background-color: #fdcb6e; }
-        .grade-f { background-color: #fab1a0; }
+        .ap {
+            background-color: #f8d7da;
+        }
 
-        input, select {
+        .on-level {
+            background-color: #d1ecf1;
+        }
+
+        .grade-a {
+            background-color: #d4edda;
+        }
+
+        .grade-b {
+            background-color: #fff3cd;
+        }
+
+        .grade-c {
+            background-color: #ffeaa7;
+        }
+
+        .grade-d {
+            background-color: #fdcb6e;
+        }
+
+        .grade-f {
+            background-color: #fab1a0;
+        }
+
+        input,
+        select {
             width: 100%;
             padding: 8px;
             border: 2px solid #e9ecef;
@@ -181,7 +204,8 @@
             transition: border-color 0.3s ease;
         }
 
-        input:focus, select:focus {
+        input:focus,
+        select:focus {
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
@@ -233,7 +257,7 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.5);
+            background-color: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(5px);
         }
 
@@ -244,13 +268,19 @@
             border-radius: 15px;
             width: 90%;
             max-width: 500px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
             animation: modalSlide 0.3s ease;
         }
 
         @keyframes modalSlide {
-            from { transform: translateY(-50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         .form-group {
@@ -322,7 +352,7 @@
             <button class="btn btn-success" onclick="openModal()">➕ Add Course</button>
             <button class="btn" onclick="clearAll()">🗑️ Clear All</button>
             <button class="btn" onclick="exportData()">📊 Export Data</button>
-            
+
             <div class="stats">
                 <div class="stat-card">
                     <div class="stat-value" id="weightedGPA">0.00</div>
@@ -341,15 +371,15 @@
 
         <div class="table-container">
             <div class="subject-filter">
-                <button class="filter-btn active" onclick="filterBySubject('all')">All</button>
-                <button class="filter-btn" onclick="filterBySubject('English')">English</button>
-                <button class="filter-btn" onclick="filterBySubject('Math')">Math</button>
-                <button class="filter-btn" onclick="filterBySubject('Science')">Science</button>
-                <button class="filter-btn" onclick="filterBySubject('Social Studies')">Social Studies</button>
-                <button class="filter-btn" onclick="filterBySubject('Foreign Lang')">Foreign Lang</button>
-                <button class="filter-btn" onclick="filterBySubject('STEM')">STEM</button>
-                <button class="filter-btn" onclick="filterBySubject('Fine Art')">Fine Art</button>
-                <button class="filter-btn" onclick="filterBySubject('Elective')">Elective</button>
+                <button class="filter-btn active" onclick="filterBySubject(event, 'all')">All</button>
+                <button class="filter-btn" onclick="filterBySubject(event, 'English')">English</button>
+                <button class="filter-btn" onclick="filterBySubject(event, 'Math')">Math</button>
+                <button class="filter-btn" onclick="filterBySubject(event, 'Science')">Science</button>
+                <button class="filter-btn" onclick="filterBySubject(event, 'Social Studies')">Social Studies</button>
+                <button class="filter-btn" onclick="filterBySubject(event, 'Foreign Lang')">Foreign Lang</button>
+                <button class="filter-btn" onclick="filterBySubject(event, 'STEM')">STEM</button>
+                <button class="filter-btn" onclick="filterBySubject(event, 'Fine Art')">Fine Art</button>
+                <button class="filter-btn" onclick="filterBySubject(event, 'Elective')">Elective</button>
             </div>
 
             <table id="gradesTable">
@@ -366,8 +396,7 @@
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody id="gradesBody">
-                </tbody>
+                <tbody id="gradesBody"></tbody>
             </table>
         </div>
     </div>
@@ -380,7 +409,7 @@
             <form id="courseForm">
                 <div class="form-group">
                     <label for="courseName">Course Name:</label>
-                    <input type="text" id="courseName" required>
+                    <input type="text" id="courseName" required />
                 </div>
                 <div class="form-group">
                     <label for="courseWeight">Weight:</label>
@@ -399,11 +428,11 @@
                 </div>
                 <div class="form-group">
                     <label for="courseGrade">Grade:</label>
-                    <input type="number" id="courseGrade" min="0" max="100" required>
+                    <input type="number" id="courseGrade" min="0" max="100" required />
                 </div>
                 <div class="form-group">
                     <label for="coursePercentage">Percentage:</label>
-                    <input type="number" id="coursePercentage" min="0" max="100" required>
+                    <input type="number" id="coursePercentage" min="0" max="100" required />
                 </div>
                 <div class="form-group">
                     <label for="courseCategory">Category:</label>
@@ -423,366 +452,345 @@
                         <button type="submit" class="btn btn-success btn-small" id="submitBtn">Add Course</button>
                         <button type="button" class="btn btn-small" onclick="closeModal()">Cancel</button>
                     </div>
-                    <button type="button" class="btn btn-danger btn-small" id="deleteBtn" onclick="deleteCourseFromModal()" style="display: none;">Delete Course</button>
+                    <button
+                        type="button"
+                        class="btn btn-danger btn-small"
+                        id="deleteBtn"
+                        onclick="deleteCourseFromModal()"
+                        style="display: none;"
+                    >
+                        Delete Course
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 
     <script>
-    let courses = [];
-    let currentFilter = 'all';
-    let editingCourseId = null;
-    let currentSort = { column: null, direction: 'asc' };
+        let courses = [];
+        let currentFilter = 'all';
+        let editingCourseId = null;
+        let currentSort = { column: null, direction: 'asc' };
 
-    // Function to save to localStorage
-    function saveCoursesToLocalStorage() {
-        localStorage.setItem('courses', JSON.stringify(courses));
-    }
+        // Function to save to localStorage
+        function saveCoursesToLocalStorage() {
+            localStorage.setItem('courses', JSON.stringify(courses));
+        }
 
-    // Initialize with data from localStorage or sample data
-    const sampleData = [
-            {id: 1, name: "GT Humanities", weight: "Honors", semester: 1, grade: 9, percentage: 89, category: "English"},
-            {id: 2, name: "GT Humanities", weight: "Honors", semester: 2, grade: 9, percentage: 96, category: "English"},
-            {id: 3, name: "English 2", weight: "Honors", semester: 1, grade: 10, percentage: 99, category: "English"},
-            {id: 4, name: "English 2", weight: "Honors", semester: 2, grade: 10, percentage: 99, category: "English"},
-            {id: 5, name: "Algebra 1", weight: "Honors", semester: 1, grade: 7, percentage: 100, category: "Math"},
-            {id: 6, name: "Algebra 1", weight: "Honors", semester: 2, grade: 7, percentage: 100, category: "Math"},
-            {id: 7, name: "Geometry", weight: "Honors", semester: 1, grade: 8, percentage: 96, category: "Math"},
-            {id: 8, name: "Geometry", weight: "Honors", semester: 2, grade: 8, percentage: 98, category: "Math"},
-            {id: 9, name: "Algebra 2", weight: "Honors", semester: 1, grade: 9, percentage: 98, category: "Math"},
-            {id: 10, name: "Algebra 2", weight: "Honors", semester: 2, grade: 9, percentage: 99, category: "Math"},
-            {id: 11, name: "Precalculus", weight: "AP", semester: 1, grade: 10, percentage: 99, category: "Math"},
-            {id: 12, name: "Precalculus", weight: "AP", semester: 2, grade: 10, percentage: 100, category: "Math"},
-            {id: 13, name: "Statistics", weight: "AP", semester: 1, grade: 10, percentage: 94, category: "Math"},
-            {id: 14, name: "Statistics", weight: "AP", semester: 2, grade: 10, percentage: 95, category: "Math"},
-            {id: 15, name: "Human Geography", weight: "AP", semester: 1, grade: 9, percentage: 95, category: "Social Studies"},
-            {id: 16, name: "Human Geography", weight: "AP", semester: 2, grade: 9, percentage: 98, category: "Social Studies"},
-            {id: 17, name: "GT Humanities", weight: "AP", semester: 1, grade: 10, percentage: 93, category: "Social Studies"},
-            {id: 18, name: "GT Humanities", weight: "AP", semester: 2, grade: 10, percentage: 98, category: "Social Studies"},
-            {id: 19, name: "Biology", weight: "Honors", semester: 1, grade: 9, percentage: 96, category: "Science"},
-            {id: 20, name: "Biology", weight: "Honors", semester: 2, grade: 9, percentage: 97, category: "Science"},
-            {id: 21, name: "Chemistry", weight: "Honors", semester: 1, grade: 10, percentage: 99, category: "Science"},
-            {id: 22, name: "Chemistry", weight: "Honors", semester: 2, grade: 10, percentage: 98, category: "Science"},
-            {id: 23, name: "Spanish 1", weight: "On-Level", semester: 1, grade: 7, percentage: 96, category: "Foreign Lang"},
-            {id: 24, name: "Spanish 1", weight: "On-Level", semester: 2, grade: 8, percentage: 97, category: "Foreign Lang"},
-            {id: 25, name: "Spanish 2", weight: "On-Level", semester: 1, grade: 9, percentage: 99, category: "Foreign Lang"},
-            {id: 26, name: "Spanish 2", weight: "On-Level", semester: 2, grade: 9, percentage: 100, category: "Foreign Lang"},
-            {id: 27, name: "Coding 7/8-PLTW", weight: "On-Level", semester: 2, grade: 8, percentage: 100, category: "STEM"},
-            {id: 28, name: "Computer Science A", weight: "AP", semester: 1, grade: 10, percentage: 99, category: "STEM"},
-            {id: 29, name: "Computer Science A", weight: "AP", semester: 1, grade: 10, percentage: 99, category: "STEM"},
-            {id: 30, name: "Computer Science A", weight: "AP", semester: 2, grade: 10, percentage: 98, category: "STEM"},
-            {id: 31, name: "Computer Science A", weight: "AP", semester: 2, grade: 10, percentage: 98, category: "STEM"},
-            {id: 32, name: "Introduction to Engineering Design", weight: "On-Level", semester: 1, grade: 9, percentage: 99, category: "STEM"},
-            {id: 33, name: "Introduction to Engineering Design", weight: "On-Level", semester: 2, grade: 9, percentage: 100, category: "STEM"},
-            {id: 34, name: "Aerospace Engineering", weight: "Honors", semester: 1, grade: 10, percentage: 99, category: "STEM"},
-            {id: 35, name: "Aerospace Engineering", weight: "Honors", semester: 2, grade: 10, percentage: 100, category: "STEM"},
-            {id: 36, name: "Symphonic Band", weight: "On-Level", semester: 1, grade: 9, percentage: 97, category: "Fine Art"},
-            {id: 37, name: "Symphonic Band", weight: "On-Level", semester: 2, grade: 9, percentage: 99, category: "Fine Art"},
-            {id: 38, name: "Marching Band", weight: "On-Level", semester: 1, grade: 9, percentage: 100, category: "Fine Art"},
-            {id: 39, name: "Outdoor Ed", weight: "On-Level", semester: 2, grade: 9, percentage: 100, category: "Elective"},
-            {id: 40, name: "Seminar", weight: "AP", semester: 1, grade: 10, percentage: 97, category: "Elective"},
-            {id: 41, name: "Seminar", weight: "AP", semester: 2, grade: 10, percentage: 100, category: "Elective"},
-            {id: 42, name: "Calculus BC", weight: "AP", semester: 1, grade: 11, percentage: 100, category: "Math"},
-            {id: 43, name: "AMSTUD", weight: "AP", semester: 1, grade: 11, percentage: 100, category: "English"},
-            {id: 44, name: "AMSTUD", weight: "AP", semester: 1, grade: 11, percentage: 100, category: "Social Studies"},
-            {id: 45, name: "Physics 1", weight: "AP", semester: 1, grade: 11, percentage: 100, category: "Science"},
-            {id: 46, name: "Environmental Science", weight: "AP", semester: 1, grade: 11, percentage: 100, category: "Science"},
-            {id: 47, name: "Psychology", weight: "AP", semester: 1, grade: 11, percentage: 100, category: "Social Studies"},
-            {id: 48, name: "Engineering Science", weight: "Honors", semester: 1, grade: 11, percentage: 100, category: "STEM"},
-            {id: 49, name: "Research", weight: "AP", semester: 1, grade: 11, percentage: 100, category: "Elective"}
+        // Sample initial data
+        const sampleData = [
+            { id: 1, name: 'GT Humanities', weight: 'Honors', semester: 1, grade: 9, percentage: 89, category: 'English' },
+            { id: 2, name: 'GT Humanities', weight: 'Honors', semester: 2, grade: 9, percentage: 96, category: 'English' },
+            { id: 3, name: 'English 2', weight: 'Honors', semester: 1, grade: 10, percentage: 99, category: 'English' },
+            { id: 4, name: 'English 2', weight: 'Honors', semester: 2, grade: 10, percentage: 99, category: 'English' },
+            { id: 5, name: 'Algebra 1', weight: 'Honors', semester: 1, grade: 7, percentage: 100, category: 'Math' },
+            { id: 6, name: 'Algebra 1', weight: 'Honors', semester: 2, grade: 7, percentage: 100, category: 'Math' },
+            { id: 7, name: 'Geometry', weight: 'Honors', semester: 1, grade: 8, percentage: 96, category: 'Math' },
+            { id: 8, name: 'Geometry', weight: 'Honors', semester: 2, grade: 8, percentage: 98, category: 'Math' },
+            { id: 9, name: 'Algebra 2', weight: 'Honors', semester: 1, grade: 9, percentage: 98, category: 'Math' },
+            { id: 10, name: 'Algebra 2', weight: 'Honors', semester: 2, grade: 9, percentage: 99, category: 'Math' },
+            { id: 11, name: 'Precalculus', weight: 'AP', semester: 1, grade: 10, percentage: 99, category: 'Math' },
+            { id: 12, name: 'Precalculus', weight: 'AP', semester: 2, grade: 10, percentage: 100, category: 'Math' },
+            { id: 13, name: 'Statistics', weight: 'AP', semester: 1, grade: 10, percentage: 94, category: 'Math' },
+            { id: 14, name: 'Statistics', weight: 'AP', semester: 2, grade: 10, percentage: 95, category: 'Math' },
+            { id: 15, name: 'Human Geography', weight: 'AP', semester: 1, grade: 9, percentage: 95, category: 'Social Studies' },
+            { id: 16, name: 'Human Geography', weight: 'AP', semester: 2, grade: 9, percentage: 98, category: 'Social Studies' },
+            { id: 17, name: 'GT Humanities', weight: 'AP', semester: 1, grade: 10, percentage: 97, category: 'English' },
+            { id: 18, name: 'GT Humanities', weight: 'AP', semester: 2, grade: 10, percentage: 99, category: 'English' },
         ];
 
-    
-    const storedCourses = localStorage.getItem('courses');
-    if (storedCourses) {
-        courses = JSON.parse(storedCourses);
-    } else {
-        courses = [...sampleData];
-        saveCoursesToLocalStorage();
-    }
-
-    function calculateGPA(percentage, weight) {
-        let weightedGPA = 0;
-        if (percentage >= 70) {
-            if (weight === 'On-Level') {
-                weightedGPA = 5.0 - (100 - percentage) * 0.1;
-            } else if (weight === 'Honors') {
-                weightedGPA = 5.5 - (100 - percentage) * 0.1;
-            } else if (weight === 'AP') {
-                weightedGPA = 6.0 - (100 - percentage) * 0.1;
+        // Load courses from localStorage or fallback to sample data
+        function loadCourses() {
+            const saved = localStorage.getItem('courses');
+            if (saved) {
+                courses = JSON.parse(saved);
+            } else {
+                courses = [...sampleData];
             }
-            weightedGPA = Math.max(weightedGPA, 2.0);
-        } else {
-            weightedGPA = 0.0;
         }
 
-        let unweightedGPA = 0;
-        if (percentage >= 90) unweightedGPA = 4.0;
-        else if (percentage >= 80) unweightedGPA = 3.0;
-        else if (percentage >= 70) unweightedGPA = 2.0;
-        else if (percentage >= 60) unweightedGPA = 1.0;
-        else unweightedGPA = 0.0;
+        // Calculate Weighted GPA based on weight and percentage
+        function calculateWeightedGPA(weight, percentage) {
+            // Simplified GPA scale
+            // Honors: add 0.5, AP: add 1.0, On-Level: no addition
+            let baseGPA;
+            if (percentage >= 90) baseGPA = 4.0;
+            else if (percentage >= 80) baseGPA = 3.0;
+            else if (percentage >= 70) baseGPA = 2.0;
+            else if (percentage >= 60) baseGPA = 1.0;
+            else baseGPA = 0;
 
-        return { weighted: weightedGPA, unweighted: unweightedGPA };
-    }
-
-    function getGradeClass(percentage) {
-        if (percentage >= 90) return 'grade-a';
-        else if (percentage >= 80) return 'grade-b';
-        else if (percentage >= 70) return 'grade-c';
-        else if (percentage >= 60) return 'grade-d';
-        else return 'grade-f';
-    }
-
-    function sortTable(column) {
-        if (currentSort.column === column) {
-            currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
-        } else {
-            currentSort.column = column;
-            currentSort.direction = 'asc';
+            if (weight === 'Honors') return Math.min(baseGPA + 0.5, 5);
+            if (weight === 'AP') return Math.min(baseGPA + 1.0, 5);
+            return baseGPA;
         }
 
-        document.querySelectorAll('th').forEach(th => {
-            th.classList.remove('sort-asc', 'sort-desc');
-        });
-
-        const headerElement = document.querySelector(`th[onclick="sortTable('${column}')"]`);
-        if (headerElement) {
-            headerElement.classList.add(currentSort.direction === 'asc' ? 'sort-asc' : 'sort-desc');
+        // Calculate Unweighted GPA based on percentage only
+        function calculateUnweightedGPA(percentage) {
+            if (percentage >= 90) return 4.0;
+            else if (percentage >= 80) return 3.0;
+            else if (percentage >= 70) return 2.0;
+            else if (percentage >= 60) return 1.0;
+            else return 0;
         }
 
-        let filteredCourses = courses;
-        if (currentFilter !== 'all') {
-            filteredCourses = courses.filter(course => course.category === currentFilter);
-        }
+        // Render the courses table
+        function renderTable() {
+            const tbody = document.getElementById('gradesBody');
+            tbody.innerHTML = '';
 
-        filteredCourses.sort((a, b) => {
-            let aValue, bValue;
-            const weightOrder = { 'AP': 3, 'Honors': 2, 'On-Level': 1 };
+            // Filter courses
+            const filtered = currentFilter === 'all'
+                ? courses
+                : courses.filter(c => c.category === currentFilter);
 
-            switch (column) {
-                case 'weight':
-                    aValue = weightOrder[a.weight];
-                    bValue = weightOrder[b.weight];
-                    break;
-                case 'semester':
-                    aValue = a.semester;
-                    bValue = b.semester;
-                    break;
-                case 'grade':
-                    aValue = a.grade;
-                    bValue = b.grade;
-                    break;
-                case 'percentage':
-                    aValue = a.percentage;
-                    bValue = b.percentage;
-                    break;
-                case 'weightedGPA':
-                    aValue = calculateGPA(a.percentage, a.weight).weighted;
-                    bValue = calculateGPA(b.percentage, b.weight).weighted;
-                    break;
-                case 'unweightedGPA':
-                    aValue = calculateGPA(a.percentage, a.weight).unweighted;
-                    bValue = calculateGPA(b.percentage, b.weight).unweighted;
-                    break;
-                default:
+            // Sort courses if applicable
+            if (currentSort.column) {
+                filtered.sort((a, b) => {
+                    let valA = a[currentSort.column];
+                    let valB = b[currentSort.column];
+
+                    // For weight, map to order
+                    if (currentSort.column === 'weight') {
+                        const order = { 'On-Level': 1, 'Honors': 2, 'AP': 3 };
+                        valA = order[valA] || 0;
+                        valB = order[valB] || 0;
+                    }
+
+                    if (typeof valA === 'string') {
+                        valA = valA.toLowerCase();
+                        valB = valB.toLowerCase();
+                    }
+
+                    if (valA < valB) return currentSort.direction === 'asc' ? -1 : 1;
+                    if (valA > valB) return currentSort.direction === 'asc' ? 1 : -1;
                     return 0;
+                });
             }
 
-            return currentSort.direction === 'asc' ? aValue - bValue : bValue - aValue;
-        });
+            filtered.forEach((course) => {
+                const tr = document.createElement('tr');
 
-        renderSortedTable(filteredCourses);
-    }
+                // Weight class for row color
+                let weightClass = '';
+                if (course.weight.toLowerCase() === 'honors') weightClass = 'honors';
+                else if (course.weight.toLowerCase() === 'ap') weightClass = 'ap';
+                else weightClass = 'on-level';
 
-    function renderSortedTable(sortedCourses) {
-        const tbody = document.getElementById('gradesBody');
-        tbody.innerHTML = '';
+                // Grade class for background color
+                let gradeClass = '';
+                if (course.percentage >= 90) gradeClass = 'grade-a';
+                else if (course.percentage >= 80) gradeClass = 'grade-b';
+                else if (course.percentage >= 70) gradeClass = 'grade-c';
+                else if (course.percentage >= 60) gradeClass = 'grade-d';
+                else gradeClass = 'grade-f';
 
-        sortedCourses.forEach(course => {
-            const gpa = calculateGPA(course.percentage, course.weight);
-            const gradeClass = getGradeClass(course.percentage);
+                tr.classList.add(weightClass, gradeClass);
 
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${course.name}</td>
-                <td><span class="${course.weight.toLowerCase()}">${course.weight}</span></td>
-                <td>${course.semester}</td>
-                <td>${course.grade}</td>
-                <td class="${gradeClass}">${course.percentage}</td>
-                <td>${gpa.weighted.toFixed(1)}</td>
-                <td>${gpa.unweighted.toFixed(1)}</td>
-                <td>${course.category}</td>
-                <td><button class="edit-btn" onclick="editCourse(${course.id})">Edit</button></td>
-            `;
-            tbody.appendChild(row);
-        });
+                tr.innerHTML = `
+                    <td>${course.name}</td>
+                    <td>${course.weight}</td>
+                    <td>${course.semester}</td>
+                    <td>${course.grade}</td>
+                    <td>${course.percentage}%</td>
+                    <td>${calculateWeightedGPA(course.weight, course.percentage).toFixed(2)}</td>
+                    <td>${calculateUnweightedGPA(course.percentage).toFixed(2)}</td>
+                    <td>${course.category}</td>
+                    <td><button class="edit-btn" onclick="editCourse(${course.id})">Edit</button></td>
+                `;
 
-        updateStats();
-    }
+                tbody.appendChild(tr);
+            });
 
-    function renderTable() {
-        const tbody = document.getElementById('gradesBody');
-        tbody.innerHTML = '';
-
-        let filteredCourses = courses;
-        if (currentFilter !== 'all') {
-            filteredCourses = courses.filter(course => course.category === currentFilter);
+            updateStats(filtered);
         }
 
-        filteredCourses.forEach(course => {
-            const gpa = calculateGPA(course.percentage, course.weight);
-            const gradeClass = getGradeClass(course.percentage);
+        // Update stats display
+        function updateStats(filteredCourses) {
+            const weightedSum = filteredCourses.reduce(
+                (sum, c) => sum + calculateWeightedGPA(c.weight, c.percentage),
+                0
+            );
+            const unweightedSum = filteredCourses.reduce(
+                (sum, c) => sum + calculateUnweightedGPA(c.percentage),
+                0
+            );
 
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${course.name}</td>
-                <td><span class="${course.weight.toLowerCase()}">${course.weight}</span></td>
-                <td>${course.semester}</td>
-                <td>${course.grade}</td>
-                <td class="${gradeClass}">${course.percentage}</td>
-                <td>${gpa.weighted.toFixed(1)}</td>
-                <td>${gpa.unweighted.toFixed(1)}</td>
-                <td>${course.category}</td>
-                <td><button class="edit-btn" onclick="editCourse(${course.id})">Edit</button></td>
-            `;
-            tbody.appendChild(row);
-        });
+            const count = filteredCourses.length;
 
-        updateStats();
-    }
-
-    function updateStats() {
-        if (courses.length === 0) {
-            document.getElementById('weightedGPA').textContent = '0.00';
-            document.getElementById('unweightedGPA').textContent = '0.00';
-            document.getElementById('totalCourses').textContent = '0';
-            return;
+            document.getElementById('weightedGPA').textContent =
+                count ? (weightedSum / count).toFixed(2) : '0.00';
+            document.getElementById('unweightedGPA').textContent =
+                count ? (unweightedSum / count).toFixed(2) : '0.00';
+            document.getElementById('totalCourses').textContent = count;
         }
 
-        let totalWeighted = 0;
-        let totalUnweighted = 0;
-        courses.forEach(course => {
-            const gpa = calculateGPA(course.percentage, course.weight);
-            totalWeighted += gpa.weighted;
-            totalUnweighted += gpa.unweighted;
+        // Filter by subject category
+        function filterBySubject(event, subject) {
+            currentFilter = subject;
+
+            // Toggle active button styling
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+
+            renderTable();
+        }
+
+        // Sort table by column
+        function sortTable(column) {
+            if (currentSort.column === column) {
+                currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort.column = column;
+                currentSort.direction = 'asc';
+            }
+
+            // Update header arrows
+            document.querySelectorAll('th.sortable').forEach(th => {
+                th.classList.remove('sort-asc', 'sort-desc');
+                if (th.textContent.replace(/[\u2191\u2193↕️]/g, '').toLowerCase() === column.toLowerCase()) {
+                    th.classList.add(currentSort.direction === 'asc' ? 'sort-asc' : 'sort-desc');
+                }
+            });
+
+            renderTable();
+        }
+
+        // Modal handling
+        function openModal() {
+            editingCourseId = null;
+            document.getElementById('modalTitle').textContent = 'Add New Course';
+            document.getElementById('submitBtn').textContent = 'Add Course';
+            document.getElementById('deleteBtn').style.display = 'none';
+
+            document.getElementById('courseForm').reset();
+
+            document.getElementById('courseModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('courseModal').style.display = 'none';
+            editingCourseId = null;
+        }
+
+        // Add or update course
+        document.getElementById('courseForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const name = document.getElementById('courseName').value.trim();
+            const weight = document.getElementById('courseWeight').value;
+            const semester = parseInt(document.getElementById('courseSemester').value);
+            const grade = parseInt(document.getElementById('courseGrade').value);
+            const percentage = parseInt(document.getElementById('coursePercentage').value);
+            const category = document.getElementById('courseCategory').value;
+
+            if (!name || isNaN(semester) || isNaN(grade) || isNaN(percentage)) {
+                alert('Please fill out all fields correctly.');
+                return;
+            }
+
+            if (editingCourseId === null) {
+                // Add new course
+                const newId = courses.length ? Math.max(...courses.map(c => c.id)) + 1 : 1;
+                courses.push({
+                    id: newId,
+                    name,
+                    weight,
+                    semester,
+                    grade,
+                    percentage,
+                    category,
+                });
+            } else {
+                // Edit existing course
+                const idx = courses.findIndex(c => c.id === editingCourseId);
+                if (idx > -1) {
+                    courses[idx] = {
+                        id: editingCourseId,
+                        name,
+                        weight,
+                        semester,
+                        grade,
+                        percentage,
+                        category,
+                    };
+                }
+            }
+
+            saveCoursesToLocalStorage();
+            renderTable();
+            closeModal();
         });
 
-        document.getElementById('weightedGPA').textContent = (totalWeighted / courses.length).toFixed(3);
-        document.getElementById('unweightedGPA').textContent = (totalUnweighted / courses.length).toFixed(3);
-        document.getElementById('totalCourses').textContent = courses.length;
-    }
+        // Edit a course (populate modal)
+        function editCourse(id) {
+            const course = courses.find(c => c.id === id);
+            if (!course) return;
 
-    function openModal() {
-        editingCourseId = null;
-        document.getElementById('modalTitle').textContent = 'Add New Course';
-        document.getElementById('submitBtn').textContent = 'Add Course';
-        document.getElementById('deleteBtn').style.display = 'none';
-        document.getElementById('courseModal').style.display = 'block';
-        document.getElementById('courseForm').reset();
-    }
-
-    function editCourse(id) {
-        editingCourseId = id;
-        const course = courses.find(c => c.id === id);
-        if (course) {
+            editingCourseId = id;
             document.getElementById('modalTitle').textContent = 'Edit Course';
-            document.getElementById('submitBtn').textContent = 'Update Course';
-            document.getElementById('deleteBtn').style.display = 'block';
+            document.getElementById('submitBtn').textContent = 'Save Changes';
+            document.getElementById('deleteBtn').style.display = 'inline-block';
+
             document.getElementById('courseName').value = course.name;
             document.getElementById('courseWeight').value = course.weight;
             document.getElementById('courseSemester').value = course.semester;
             document.getElementById('courseGrade').value = course.grade;
             document.getElementById('coursePercentage').value = course.percentage;
             document.getElementById('courseCategory').value = course.category;
+
             document.getElementById('courseModal').style.display = 'block';
         }
-    }
 
-    function closeModal() {
-        document.getElementById('courseModal').style.display = 'none';
-        document.getElementById('courseForm').reset();
-        editingCourseId = null;
-    }
+        // Delete course from modal
+        function deleteCourseFromModal() {
+            if (editingCourseId === null) return;
 
-    function addOrUpdateCourse(event) {
-        event.preventDefault();
-
-        const courseData = {
-            name: document.getElementById('courseName').value,
-            weight: document.getElementById('courseWeight').value,
-            semester: parseInt(document.getElementById('courseSemester').value),
-            grade: parseInt(document.getElementById('courseGrade').value),
-            percentage: parseInt(document.getElementById('coursePercentage').value),
-            category: document.getElementById('courseCategory').value
-        };
-
-        if (editingCourseId) {
-            const courseIndex = courses.findIndex(c => c.id === editingCourseId);
-            if (courseIndex !== -1) {
-                courses[courseIndex] = { ...courses[courseIndex], ...courseData };
+            if (confirm('Are you sure you want to delete this course?')) {
+                courses = courses.filter(c => c.id !== editingCourseId);
+                saveCoursesToLocalStorage();
+                renderTable();
+                closeModal();
             }
-        } else {
-            const newCourse = {
-                id: Date.now(),
-                ...courseData
-            };
-            courses.push(newCourse);
         }
 
-        saveCoursesToLocalStorage();
-        renderTable();
-        closeModal();
-    }
-
-    function deleteCourseFromModal() {
-        if (editingCourseId && confirm('Are you sure you want to delete this course?')) {
-            courses = courses.filter(course => course.id !== editingCourseId);
-            saveCoursesToLocalStorage();
-            renderTable();
-            closeModal();
+        // Clear all courses
+        function clearAll() {
+            if (confirm('Are you sure you want to clear all courses? This cannot be undone.')) {
+                courses = [];
+                saveCoursesToLocalStorage();
+                renderTable();
+            }
         }
-    }
 
-    function clearAll() {
-        if (confirm('Are you sure you want to clear all courses?')) {
-            courses = [];
-            saveCoursesToLocalStorage();
-            renderTable();
+        // Export data to JSON (download)
+        function exportData() {
+            const dataStr = JSON.stringify(courses, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'courses-data.json';
+            a.click();
+
+            URL.revokeObjectURL(url);
         }
-    }
 
-    function filterBySubject(subject) {
-        currentFilter = subject;
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
-        event.target.classList.add('active');
-        renderTable();
-    }
-
-    function exportData() {
-        const dataStr = JSON.stringify(courses, null, 2);
-        const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
-        const exportFileDefaultName = 'grade_data.json';
-        const linkElement = document.createElement('a');
-        linkElement.setAttribute('href', dataUri);
-        linkElement.setAttribute('download', exportFileDefaultName);
-        linkElement.click();
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        document.getElementById('courseForm').addEventListener('submit', addOrUpdateCourse);
+        // Close modal when clicking outside content
         window.onclick = function (event) {
             const modal = document.getElementById('courseModal');
             if (event.target === modal) {
                 closeModal();
             }
         };
-        renderTable();
-    });
-</script>
 
+        // Initialize
+        loadCourses();
+        renderTable();
+    </script>
 </body>
 </html>
+
