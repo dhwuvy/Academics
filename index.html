@@ -320,7 +320,6 @@
                         <th>Grade</th>
                         <th>Percentage</th>
                         <th>Weighted GPA</th>
-                        <th>Max GPA</th>
                         <th>Unweighted GPA</th>
                         <th>Category</th>
                         <th>Actions</th>
@@ -442,25 +441,44 @@
 
         courses = [...sampleData];
 
-        function calculateGPA(grade, weight) {
-            let baseGPA = 0;
-            if (grade >= 90) baseGPA = 4.0;
-            else if (grade >= 80) baseGPA = 3.0;
-            else if (grade >= 70) baseGPA = 2.0;
-            else if (grade >= 60) baseGPA = 1.0;
-            else baseGPA = 0.0;
+        function calculateGPA(percentage, weight) {
+            // Calculate weighted GPA based on corrected system
+            let weightedGPA = 0;
+            
+            if (percentage >= 70) {
+                if (weight === 'On-Level') {
+                    // On-Level: 100 = 5.0, decreasing by 0.1 per point
+                    weightedGPA = 5.0 - (100 - percentage) * 0.1;
+                } else if (weight === 'Honors') {
+                    // Honors: 100 = 5.5, decreasing by 0.1 per point
+                    weightedGPA = 5.5 - (100 - percentage) * 0.1;
+                } else if (weight === 'AP') {
+                    // AP: 100 = 6.0, decreasing by 0.1 per point
+                    weightedGPA = 6.0 - (100 - percentage) * 0.1;
+                }
+                
+                // Ensure minimum of 2.0 for passing grades
+                weightedGPA = Math.max(weightedGPA, 2.0);
+            } else {
+                // Below 70 = 0.0
+                weightedGPA = 0.0;
+            }
 
-            let weightedGPA = baseGPA;
-            if (weight === 'Honors') weightedGPA += 0.5;
-            else if (weight === 'AP') weightedGPA += 1.0;
+            // Calculate unweighted GPA (standard 4.0 scale)
+            let unweightedGPA = 0;
+            if (percentage >= 90) {
+                unweightedGPA = 4.0;
+            } else if (percentage >= 80) {
+                unweightedGPA = 3.0;
+            } else if (percentage >= 70) {
+                unweightedGPA = 2.0;
+            } else if (percentage >= 60) {
+                unweightedGPA = 1.0;
+            } else {
+                unweightedGPA = 0.0;
+            }
 
-            return { weighted: weightedGPA, unweighted: baseGPA };
-        }
-
-        function getMaxGPA(weight) {
-            if (weight === 'Honors') return 4.5;
-            else if (weight === 'AP') return 5.0;
-            else return 4.0;
+            return { weighted: weightedGPA, unweighted: unweightedGPA };
         }
 
         function getGradeClass(percentage) {
@@ -482,7 +500,6 @@
 
             filteredCourses.forEach(course => {
                 const gpa = calculateGPA(course.percentage, course.weight);
-                const maxGPA = getMaxGPA(course.weight);
                 const gradeClass = getGradeClass(course.percentage);
 
                 const row = document.createElement('tr');
@@ -493,7 +510,6 @@
                     <td>${course.grade}</td>
                     <td class="${gradeClass}">${course.percentage}</td>
                     <td>${gpa.weighted.toFixed(1)}</td>
-                    <td>${maxGPA}</td>
                     <td>${gpa.unweighted.toFixed(1)}</td>
                     <td>${course.category}</td>
                     <td><button class="delete-btn" onclick="deleteCourse(${course.id})">Delete</button></td>
@@ -596,17 +612,19 @@
         }
 
         // Event listeners
-        document.getElementById('courseForm').addEventListener('submit', addCourse);
-
-        window.onclick = function(event) {
-            const modal = document.getElementById('courseModal');
-            if (event.target === modal) {
-                closeModal();
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('courseForm').addEventListener('submit', addCourse);
+            
+            window.onclick = function(event) {
+                const modal = document.getElementById('courseModal');
+                if (event.target === modal) {
+                    closeModal();
+                }
             }
-        }
-
-        // Initialize the table
-        renderTable();
+            
+            // Initialize the table after DOM is loaded
+            renderTable();
+        });
     </script>
 </body>
 </html>
