@@ -125,6 +125,31 @@
             position: sticky;
             top: 0;
             z-index: 10;
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.3s ease;
+        }
+
+        th:hover {
+            background: linear-gradient(135deg, #5a6fd8 0%, #6b4190 100%);
+        }
+
+        th.sortable::after {
+            content: ' ↕️';
+            font-size: 0.8em;
+            opacity: 0.7;
+        }
+
+        th.sort-asc::after {
+            content: ' ↑';
+            color: #fff;
+            opacity: 1;
+        }
+
+        th.sort-desc::after {
+            content: ' ↓';
+            color: #fff;
+            opacity: 1;
         }
 
         td {
@@ -331,12 +356,12 @@
                 <thead>
                     <tr>
                         <th>Subject</th>
-                        <th>Weight</th>
-                        <th>Semester</th>
-                        <th>Grade</th>
-                        <th>Percentage</th>
-                        <th>Weighted GPA</th>
-                        <th>Unweighted GPA</th>
+                        <th class="sortable" onclick="sortTable('weight')">Weight</th>
+                        <th class="sortable" onclick="sortTable('semester')">Semester</th>
+                        <th class="sortable" onclick="sortTable('grade')">Grade</th>
+                        <th class="sortable" onclick="sortTable('percentage')">Percentage</th>
+                        <th class="sortable" onclick="sortTable('weightedGPA')">Weighted GPA</th>
+                        <th class="sortable" onclick="sortTable('unweightedGPA')">Unweighted GPA</th>
                         <th>Category</th>
                         <th>Actions</th>
                     </tr>
@@ -408,6 +433,7 @@
         let courses = [];
         let currentFilter = 'all';
         let editingCourseId = null;
+        let currentSort = { column: null, direction: 'asc' };
 
         // Initialize with complete sample data
         const sampleData = [
@@ -512,6 +538,102 @@
             else return 'grade-f';
         }
 
+        function sortTable(column) {
+            // Toggle sort direction if clicking the same column
+            if (currentSort.column === column) {
+                currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort.column = column;
+                currentSort.direction = 'asc';
+            }
+
+            // Update header classes
+            document.querySelectorAll('th').forEach(th => {
+                th.classList.remove('sort-asc', 'sort-desc');
+            });
+
+            const headerElement = document.querySelector(`th[onclick="sortTable('${column}')"]`);
+            if (headerElement) {
+                headerElement.classList.add(currentSort.direction === 'asc' ? 'sort-asc' : 'sort-desc');
+            }
+
+            // Sort the courses array
+            let filteredCourses = courses;
+            if (currentFilter !== 'all') {
+                filteredCourses = courses.filter(course => course.category === currentFilter);
+            }
+
+            filteredCourses.sort((a, b) => {
+                let aValue, bValue;
+
+                switch (column) {
+                    case 'weight':
+                        // Sort by weight priority: AP > Honors > On-Level
+                        const weightOrder = { 'AP': 3, 'Honors': 2, 'On-Level': 1 };
+                        aValue = weightOrder[a.weight];
+                        bValue = weightOrder[b.weight];
+                        break;
+                    case 'semester':
+                        aValue = a.semester;
+                        bValue = b.semester;
+                        break;
+                    case 'grade':
+                        aValue = a.grade;
+                        bValue = b.grade;
+                        break;
+                    case 'percentage':
+                        aValue = a.percentage;
+                        bValue = b.percentage;
+                        break;
+                    case 'weightedGPA':
+                        aValue = calculateGPA(a.percentage, a.weight).weighted;
+                        bValue = calculateGPA(b.percentage, b.weight).weighted;
+                        break;
+                    case 'unweightedGPA':
+                        aValue = calculateGPA(a.percentage, a.weight).unweighted;
+                        bValue = calculateGPA(b.percentage, b.weight).unweighted;
+                        break;
+                    default:
+                        return 0;
+                }
+
+                if (currentSort.direction === 'asc') {
+                    return aValue - bValue;
+                } else {
+                    return bValue - aValue;
+                }
+            });
+
+            // Re-render the table with sorted data
+            renderSortedTable(filteredCourses);
+        }
+
+        function renderSortedTable(sortedCourses) {
+            const tbody = document.getElementById('gradesBody');
+            tbody.innerHTML = '';
+
+            sortedCourses.forEach(course => {
+                const gpa = calculateGPA(course.percentage, course.weight);
+                const gradeClass = getGradeClass(course.percentage);
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${course.name}</td>
+                    <td><span class="${course.weight.toLowerCase()}">${course.weight}</span></td>
+                    <td>${course.semester}</td>
+                    <td>${course.grade}</td>
+                    <td class="${gradeClass}">${course.percentage}</td>
+                    <td>${gpa.weighted.toFixed(1)}</td>
+                    <td>${gpa.unweighted.toFixed(1)}</td>
+                    <td>${course.category}</td>
+                    <td><button class="edit-btn" onclick="editCourse(${course.id})">Edit</button></td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            updateStats();
+        }
+
         function renderTable() {
             const tbody = document.getElementById('gradesBody');
             tbody.innerHTML = '';
@@ -553,7 +675,6 @@
 
             let totalWeighted = 0;
             let totalUnweighted = 0;
-
             courses.forEach(course => {
                 const gpa = calculateGPA(course.percentage, course.weight);
                 totalWeighted += gpa.weighted;
