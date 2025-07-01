@@ -306,6 +306,9 @@
                 <button class="filter-btn" onclick="filterBySubject('Science')">Science</button>
                 <button class="filter-btn" onclick="filterBySubject('Social Studies')">Social Studies</button>
                 <button class="filter-btn" onclick="filterBySubject('Foreign Lang')">Foreign Lang</button>
+                <button class="filter-btn" onclick="filterBySubject('STEM')">STEM</button>
+                <button class="filter-btn" onclick="filterBySubject('Fine Art')">Fine Art</button>
+                <button class="filter-btn" onclick="filterBySubject('Elective')">Elective</button>
             </div>
 
             <table id="gradesTable">
@@ -370,6 +373,9 @@
                         <option value="Science">Science</option>
                         <option value="Social Studies">Social Studies</option>
                         <option value="Foreign Lang">Foreign Lang</option>
+                        <option value="STEM">STEM</option>
+                        <option value="Fine Art">Fine Art</option>
+                        <option value="Elective">Elective</option>
                     </select>
                 </div>
                 <button type="submit" class="btn btn-success">Add Course</button>
@@ -381,7 +387,7 @@
         let courses = [];
         let currentFilter = 'all';
 
-        // Initialize with sample data
+        // Initialize with complete sample data
         const sampleData = [
             {id: 1, name: "GT Humanities", weight: "Honors", semester: 1, grade: 9, percentage: 89, category: "English"},
             {id: 2, name: "GT Humanities", weight: "Honors", semester: 2, grade: 9, percentage: 96, category: "English"},
@@ -406,7 +412,7 @@
             {id: 21, name: "Chemistry", weight: "Honors", semester: 1, grade: 10, percentage: 99, category: "Science"},
             {id: 22, name: "Chemistry", weight: "Honors", semester: 2, grade: 10, percentage: 98, category: "Science"},
             {id: 23, name: "Spanish 1", weight: "On-Level", semester: 1, grade: 7, percentage: 96, category: "Foreign Lang"},
-            {id: 24, name: "Spanish 1", weight: "On-Level", semester: 2, grade: 8, percentage: 97, category: "Foreign Lang"}
+            {id: 24, name: "Spanish 1", weight: "On-Level", semester: 2, grade: 8, percentage: 97, category: "Foreign Lang"},
             {id: 25, name: "Spanish 2", weight: "On-Level", semester: 1, grade: 9, percentage: 99, category: "Foreign Lang"},
             {id: 26, name: "Spanish 2", weight: "On-Level", semester: 2, grade: 9, percentage: 100, category: "Foreign Lang"},
             {id: 27, name: "Coding 7/8-PLTW", weight: "On-Level", semester: 2, grade: 8, percentage: 100, category: "STEM"},
@@ -432,7 +438,6 @@
             {id: 47, name: "Psychology", weight: "AP", semester: 1, grade: 11, percentage: 100, category: "Social Studies"},
             {id: 48, name: "Engineering Science", weight: "Honors", semester: 1, grade: 11, percentage: 100, category: "STEM"},
             {id: 49, name: "Research", weight: "AP", semester: 1, grade: 11, percentage: 100, category: "Elective"}
-        ];
         ];
 
         courses = [...sampleData];
