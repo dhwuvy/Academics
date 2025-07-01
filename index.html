@@ -430,13 +430,18 @@
     </div>
 
     <script>
-        let courses = [];
-        let currentFilter = 'all';
-        let editingCourseId = null;
-        let currentSort = { column: null, direction: 'asc' };
+    let courses = [];
+    let currentFilter = 'all';
+    let editingCourseId = null;
+    let currentSort = { column: null, direction: 'asc' };
 
-        // Initialize with complete sample data
-        const sampleData = [
+    // Function to save to localStorage
+    function saveCoursesToLocalStorage() {
+        localStorage.setItem('courses', JSON.stringify(courses));
+    }
+
+    // Initialize with data from localStorage or sample data
+    const sampleData = [
             {id: 1, name: "GT Humanities", weight: "Honors", semester: 1, grade: 9, percentage: 89, category: "English"},
             {id: 2, name: "GT Humanities", weight: "Honors", semester: 2, grade: 9, percentage: 96, category: "English"},
             {id: 3, name: "English 2", weight: "Honors", semester: 1, grade: 10, percentage: 99, category: "English"},
@@ -488,327 +493,296 @@
             {id: 49, name: "Research", weight: "AP", semester: 1, grade: 11, percentage: 100, category: "Elective"}
         ];
 
+    
+    const storedCourses = localStorage.getItem('courses');
+    if (storedCourses) {
+        courses = JSON.parse(storedCourses);
+    } else {
         courses = [...sampleData];
+        saveCoursesToLocalStorage();
+    }
 
-        function calculateGPA(percentage, weight) {
-            // Calculate weighted GPA based on corrected system
-            let weightedGPA = 0;
-            
-            if (percentage >= 70) {
-                if (weight === 'On-Level') {
-                    // On-Level: 100 = 5.0, decreasing by 0.1 per point
-                    weightedGPA = 5.0 - (100 - percentage) * 0.1;
-                } else if (weight === 'Honors') {
-                    // Honors: 100 = 5.5, decreasing by 0.1 per point
-                    weightedGPA = 5.5 - (100 - percentage) * 0.1;
-                } else if (weight === 'AP') {
-                    // AP: 100 = 6.0, decreasing by 0.1 per point
-                    weightedGPA = 6.0 - (100 - percentage) * 0.1;
-                }
-                
-                // Ensure minimum of 2.0 for passing grades
-                weightedGPA = Math.max(weightedGPA, 2.0);
-            } else {
-                // Below 70 = 0.0
-                weightedGPA = 0.0;
+    function calculateGPA(percentage, weight) {
+        let weightedGPA = 0;
+        if (percentage >= 70) {
+            if (weight === 'On-Level') {
+                weightedGPA = 5.0 - (100 - percentage) * 0.1;
+            } else if (weight === 'Honors') {
+                weightedGPA = 5.5 - (100 - percentage) * 0.1;
+            } else if (weight === 'AP') {
+                weightedGPA = 6.0 - (100 - percentage) * 0.1;
             }
-
-            // Calculate unweighted GPA (standard 4.0 scale)
-            let unweightedGPA = 0;
-            if (percentage >= 90) {
-                unweightedGPA = 4.0;
-            } else if (percentage >= 80) {
-                unweightedGPA = 3.0;
-            } else if (percentage >= 70) {
-                unweightedGPA = 2.0;
-            } else if (percentage >= 60) {
-                unweightedGPA = 1.0;
-            } else {
-                unweightedGPA = 0.0;
-            }
-
-            return { weighted: weightedGPA, unweighted: unweightedGPA };
+            weightedGPA = Math.max(weightedGPA, 2.0);
+        } else {
+            weightedGPA = 0.0;
         }
 
-        function getGradeClass(percentage) {
-            if (percentage >= 90) return 'grade-a';
-            else if (percentage >= 80) return 'grade-b';
-            else if (percentage >= 70) return 'grade-c';
-            else if (percentage >= 60) return 'grade-d';
-            else return 'grade-f';
+        let unweightedGPA = 0;
+        if (percentage >= 90) unweightedGPA = 4.0;
+        else if (percentage >= 80) unweightedGPA = 3.0;
+        else if (percentage >= 70) unweightedGPA = 2.0;
+        else if (percentage >= 60) unweightedGPA = 1.0;
+        else unweightedGPA = 0.0;
+
+        return { weighted: weightedGPA, unweighted: unweightedGPA };
+    }
+
+    function getGradeClass(percentage) {
+        if (percentage >= 90) return 'grade-a';
+        else if (percentage >= 80) return 'grade-b';
+        else if (percentage >= 70) return 'grade-c';
+        else if (percentage >= 60) return 'grade-d';
+        else return 'grade-f';
+    }
+
+    function sortTable(column) {
+        if (currentSort.column === column) {
+            currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+        } else {
+            currentSort.column = column;
+            currentSort.direction = 'asc';
         }
 
-        function sortTable(column) {
-            // Toggle sort direction if clicking the same column
-            if (currentSort.column === column) {
-                currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
-            } else {
-                currentSort.column = column;
-                currentSort.direction = 'asc';
-            }
+        document.querySelectorAll('th').forEach(th => {
+            th.classList.remove('sort-asc', 'sort-desc');
+        });
 
-            // Update header classes
-            document.querySelectorAll('th').forEach(th => {
-                th.classList.remove('sort-asc', 'sort-desc');
-            });
-
-            const headerElement = document.querySelector(`th[onclick="sortTable('${column}')"]`);
-            if (headerElement) {
-                headerElement.classList.add(currentSort.direction === 'asc' ? 'sort-asc' : 'sort-desc');
-            }
-
-            // Sort the courses array
-            let filteredCourses = courses;
-            if (currentFilter !== 'all') {
-                filteredCourses = courses.filter(course => course.category === currentFilter);
-            }
-
-            filteredCourses.sort((a, b) => {
-                let aValue, bValue;
-
-                switch (column) {
-                    case 'weight':
-                        // Sort by weight priority: AP > Honors > On-Level
-                        const weightOrder = { 'AP': 3, 'Honors': 2, 'On-Level': 1 };
-                        aValue = weightOrder[a.weight];
-                        bValue = weightOrder[b.weight];
-                        break;
-                    case 'semester':
-                        aValue = a.semester;
-                        bValue = b.semester;
-                        break;
-                    case 'grade':
-                        aValue = a.grade;
-                        bValue = b.grade;
-                        break;
-                    case 'percentage':
-                        aValue = a.percentage;
-                        bValue = b.percentage;
-                        break;
-                    case 'weightedGPA':
-                        aValue = calculateGPA(a.percentage, a.weight).weighted;
-                        bValue = calculateGPA(b.percentage, b.weight).weighted;
-                        break;
-                    case 'unweightedGPA':
-                        aValue = calculateGPA(a.percentage, a.weight).unweighted;
-                        bValue = calculateGPA(b.percentage, b.weight).unweighted;
-                        break;
-                    default:
-                        return 0;
-                }
-
-                if (currentSort.direction === 'asc') {
-                    return aValue - bValue;
-                } else {
-                    return bValue - aValue;
-                }
-            });
-
-            // Re-render the table with sorted data
-            renderSortedTable(filteredCourses);
+        const headerElement = document.querySelector(`th[onclick="sortTable('${column}')"]`);
+        if (headerElement) {
+            headerElement.classList.add(currentSort.direction === 'asc' ? 'sort-asc' : 'sort-desc');
         }
 
-        function renderSortedTable(sortedCourses) {
-            const tbody = document.getElementById('gradesBody');
-            tbody.innerHTML = '';
-
-            sortedCourses.forEach(course => {
-                const gpa = calculateGPA(course.percentage, course.weight);
-                const gradeClass = getGradeClass(course.percentage);
-
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${course.name}</td>
-                    <td><span class="${course.weight.toLowerCase()}">${course.weight}</span></td>
-                    <td>${course.semester}</td>
-                    <td>${course.grade}</td>
-                    <td class="${gradeClass}">${course.percentage}</td>
-                    <td>${gpa.weighted.toFixed(1)}</td>
-                    <td>${gpa.unweighted.toFixed(1)}</td>
-                    <td>${course.category}</td>
-                    <td><button class="edit-btn" onclick="editCourse(${course.id})">Edit</button></td>
-                `;
-                tbody.appendChild(row);
-            });
-
-            updateStats();
+        let filteredCourses = courses;
+        if (currentFilter !== 'all') {
+            filteredCourses = courses.filter(course => course.category === currentFilter);
         }
 
-        function renderTable() {
-            const tbody = document.getElementById('gradesBody');
-            tbody.innerHTML = '';
+        filteredCourses.sort((a, b) => {
+            let aValue, bValue;
+            const weightOrder = { 'AP': 3, 'Honors': 2, 'On-Level': 1 };
 
-            let filteredCourses = courses;
-            if (currentFilter !== 'all') {
-                filteredCourses = courses.filter(course => course.category === currentFilter);
+            switch (column) {
+                case 'weight':
+                    aValue = weightOrder[a.weight];
+                    bValue = weightOrder[b.weight];
+                    break;
+                case 'semester':
+                    aValue = a.semester;
+                    bValue = b.semester;
+                    break;
+                case 'grade':
+                    aValue = a.grade;
+                    bValue = b.grade;
+                    break;
+                case 'percentage':
+                    aValue = a.percentage;
+                    bValue = b.percentage;
+                    break;
+                case 'weightedGPA':
+                    aValue = calculateGPA(a.percentage, a.weight).weighted;
+                    bValue = calculateGPA(b.percentage, b.weight).weighted;
+                    break;
+                case 'unweightedGPA':
+                    aValue = calculateGPA(a.percentage, a.weight).unweighted;
+                    bValue = calculateGPA(b.percentage, b.weight).unweighted;
+                    break;
+                default:
+                    return 0;
             }
 
-            filteredCourses.forEach(course => {
-                const gpa = calculateGPA(course.percentage, course.weight);
-                const gradeClass = getGradeClass(course.percentage);
+            return currentSort.direction === 'asc' ? aValue - bValue : bValue - aValue;
+        });
 
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${course.name}</td>
-                    <td><span class="${course.weight.toLowerCase()}">${course.weight}</span></td>
-                    <td>${course.semester}</td>
-                    <td>${course.grade}</td>
-                    <td class="${gradeClass}">${course.percentage}</td>
-                    <td>${gpa.weighted.toFixed(1)}</td>
-                    <td>${gpa.unweighted.toFixed(1)}</td>
-                    <td>${course.category}</td>
-                    <td><button class="edit-btn" onclick="editCourse(${course.id})">Edit</button></td>
-                `;
-                tbody.appendChild(row);
-            });
+        renderSortedTable(filteredCourses);
+    }
 
-            updateStats();
+    function renderSortedTable(sortedCourses) {
+        const tbody = document.getElementById('gradesBody');
+        tbody.innerHTML = '';
+
+        sortedCourses.forEach(course => {
+            const gpa = calculateGPA(course.percentage, course.weight);
+            const gradeClass = getGradeClass(course.percentage);
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${course.name}</td>
+                <td><span class="${course.weight.toLowerCase()}">${course.weight}</span></td>
+                <td>${course.semester}</td>
+                <td>${course.grade}</td>
+                <td class="${gradeClass}">${course.percentage}</td>
+                <td>${gpa.weighted.toFixed(1)}</td>
+                <td>${gpa.unweighted.toFixed(1)}</td>
+                <td>${course.category}</td>
+                <td><button class="edit-btn" onclick="editCourse(${course.id})">Edit</button></td>
+            `;
+            tbody.appendChild(row);
+        });
+
+        updateStats();
+    }
+
+    function renderTable() {
+        const tbody = document.getElementById('gradesBody');
+        tbody.innerHTML = '';
+
+        let filteredCourses = courses;
+        if (currentFilter !== 'all') {
+            filteredCourses = courses.filter(course => course.category === currentFilter);
         }
 
-        function updateStats() {
-            if (courses.length === 0) {
-                document.getElementById('weightedGPA').textContent = '0.00';
-                document.getElementById('unweightedGPA').textContent = '0.00';
-                document.getElementById('totalCourses').textContent = '0';
-                return;
-            }
+        filteredCourses.forEach(course => {
+            const gpa = calculateGPA(course.percentage, course.weight);
+            const gradeClass = getGradeClass(course.percentage);
 
-            let totalWeighted = 0;
-            let totalUnweighted = 0;
-            courses.forEach(course => {
-                const gpa = calculateGPA(course.percentage, course.weight);
-                totalWeighted += gpa.weighted;
-                totalUnweighted += gpa.unweighted;
-            });
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${course.name}</td>
+                <td><span class="${course.weight.toLowerCase()}">${course.weight}</span></td>
+                <td>${course.semester}</td>
+                <td>${course.grade}</td>
+                <td class="${gradeClass}">${course.percentage}</td>
+                <td>${gpa.weighted.toFixed(1)}</td>
+                <td>${gpa.unweighted.toFixed(1)}</td>
+                <td>${course.category}</td>
+                <td><button class="edit-btn" onclick="editCourse(${course.id})">Edit</button></td>
+            `;
+            tbody.appendChild(row);
+        });
 
-            const avgWeighted = totalWeighted / courses.length;
-            const avgUnweighted = totalUnweighted / courses.length;
+        updateStats();
+    }
 
-            document.getElementById('weightedGPA').textContent = avgWeighted.toFixed(3);
-            document.getElementById('unweightedGPA').textContent = avgUnweighted.toFixed(3);
-            document.getElementById('totalCourses').textContent = courses.length;
+    function updateStats() {
+        if (courses.length === 0) {
+            document.getElementById('weightedGPA').textContent = '0.00';
+            document.getElementById('unweightedGPA').textContent = '0.00';
+            document.getElementById('totalCourses').textContent = '0';
+            return;
         }
 
-        function openModal() {
-            editingCourseId = null;
-            document.getElementById('modalTitle').textContent = 'Add New Course';
-            document.getElementById('submitBtn').textContent = 'Add Course';
-            document.getElementById('deleteBtn').style.display = 'none';
+        let totalWeighted = 0;
+        let totalUnweighted = 0;
+        courses.forEach(course => {
+            const gpa = calculateGPA(course.percentage, course.weight);
+            totalWeighted += gpa.weighted;
+            totalUnweighted += gpa.unweighted;
+        });
+
+        document.getElementById('weightedGPA').textContent = (totalWeighted / courses.length).toFixed(3);
+        document.getElementById('unweightedGPA').textContent = (totalUnweighted / courses.length).toFixed(3);
+        document.getElementById('totalCourses').textContent = courses.length;
+    }
+
+    function openModal() {
+        editingCourseId = null;
+        document.getElementById('modalTitle').textContent = 'Add New Course';
+        document.getElementById('submitBtn').textContent = 'Add Course';
+        document.getElementById('deleteBtn').style.display = 'none';
+        document.getElementById('courseModal').style.display = 'block';
+        document.getElementById('courseForm').reset();
+    }
+
+    function editCourse(id) {
+        editingCourseId = id;
+        const course = courses.find(c => c.id === id);
+        if (course) {
+            document.getElementById('modalTitle').textContent = 'Edit Course';
+            document.getElementById('submitBtn').textContent = 'Update Course';
+            document.getElementById('deleteBtn').style.display = 'block';
+            document.getElementById('courseName').value = course.name;
+            document.getElementById('courseWeight').value = course.weight;
+            document.getElementById('courseSemester').value = course.semester;
+            document.getElementById('courseGrade').value = course.grade;
+            document.getElementById('coursePercentage').value = course.percentage;
+            document.getElementById('courseCategory').value = course.category;
             document.getElementById('courseModal').style.display = 'block';
-            document.getElementById('courseForm').reset();
         }
+    }
 
-        function editCourse(id) {
-            editingCourseId = id;
-            const course = courses.find(c => c.id === id);
-            
-            if (course) {
-                document.getElementById('modalTitle').textContent = 'Edit Course';
-                document.getElementById('submitBtn').textContent = 'Update Course';
-                document.getElementById('deleteBtn').style.display = 'block';
-                
-                // Populate form with current values
-                document.getElementById('courseName').value = course.name;
-                document.getElementById('courseWeight').value = course.weight;
-                document.getElementById('courseSemester').value = course.semester;
-                document.getElementById('courseGrade').value = course.grade;
-                document.getElementById('coursePercentage').value = course.percentage;
-                document.getElementById('courseCategory').value = course.category;
-                
-                document.getElementById('courseModal').style.display = 'block';
+    function closeModal() {
+        document.getElementById('courseModal').style.display = 'none';
+        document.getElementById('courseForm').reset();
+        editingCourseId = null;
+    }
+
+    function addOrUpdateCourse(event) {
+        event.preventDefault();
+
+        const courseData = {
+            name: document.getElementById('courseName').value,
+            weight: document.getElementById('courseWeight').value,
+            semester: parseInt(document.getElementById('courseSemester').value),
+            grade: parseInt(document.getElementById('courseGrade').value),
+            percentage: parseInt(document.getElementById('coursePercentage').value),
+            category: document.getElementById('courseCategory').value
+        };
+
+        if (editingCourseId) {
+            const courseIndex = courses.findIndex(c => c.id === editingCourseId);
+            if (courseIndex !== -1) {
+                courses[courseIndex] = { ...courses[courseIndex], ...courseData };
             }
-        }
-
-        function closeModal() {
-            document.getElementById('courseModal').style.display = 'none';
-            document.getElementById('courseForm').reset();
-            editingCourseId = null;
-        }
-
-        function addOrUpdateCourse(event) {
-            event.preventDefault();
-            
-            const courseData = {
-                name: document.getElementById('courseName').value,
-                weight: document.getElementById('courseWeight').value,
-                semester: parseInt(document.getElementById('courseSemester').value),
-                grade: parseInt(document.getElementById('courseGrade').value),
-                percentage: parseInt(document.getElementById('coursePercentage').value),
-                category: document.getElementById('courseCategory').value
+        } else {
+            const newCourse = {
+                id: Date.now(),
+                ...courseData
             };
+            courses.push(newCourse);
+        }
 
-            if (editingCourseId) {
-                // Update existing course
-                const courseIndex = courses.findIndex(c => c.id === editingCourseId);
-                if (courseIndex !== -1) {
-                    courses[courseIndex] = { ...courses[courseIndex], ...courseData };
-                }
-            } else {
-                // Add new course
-                const newCourse = {
-                    id: Date.now(),
-                    ...courseData
-                };
-                courses.push(newCourse);
-            }
+        saveCoursesToLocalStorage();
+        renderTable();
+        closeModal();
+    }
 
+    function deleteCourseFromModal() {
+        if (editingCourseId && confirm('Are you sure you want to delete this course?')) {
+            courses = courses.filter(course => course.id !== editingCourseId);
+            saveCoursesToLocalStorage();
             renderTable();
             closeModal();
         }
+    }
 
-        function deleteCourseFromModal() {
-            if (editingCourseId && confirm('Are you sure you want to delete this course?')) {
-                courses = courses.filter(course => course.id !== editingCourseId);
-                renderTable();
+    function clearAll() {
+        if (confirm('Are you sure you want to clear all courses?')) {
+            courses = [];
+            saveCoursesToLocalStorage();
+            renderTable();
+        }
+    }
+
+    function filterBySubject(subject) {
+        currentFilter = subject;
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        event.target.classList.add('active');
+        renderTable();
+    }
+
+    function exportData() {
+        const dataStr = JSON.stringify(courses, null, 2);
+        const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+        const exportFileDefaultName = 'grade_data.json';
+        const linkElement = document.createElement('a');
+        linkElement.setAttribute('href', dataUri);
+        linkElement.setAttribute('download', exportFileDefaultName);
+        linkElement.click();
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('courseForm').addEventListener('submit', addOrUpdateCourse);
+        window.onclick = function (event) {
+            const modal = document.getElementById('courseModal');
+            if (event.target === modal) {
                 closeModal();
             }
-        }
+        };
+        renderTable();
+    });
+</script>
 
-        function clearAll() {
-            if (confirm('Are you sure you want to clear all courses?')) {
-                courses = [];
-                renderTable();
-            }
-        }
-
-        function filterBySubject(subject) {
-            currentFilter = subject;
-            
-            // Update active button
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            renderTable();
-        }
-
-        function exportData() {
-            const dataStr = JSON.stringify(courses, null, 2);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            
-            const exportFileDefaultName = 'grade_data.json';
-            
-            const linkElement = document.createElement('a');
-            linkElement.setAttribute('href', dataUri);
-            linkElement.setAttribute('download', exportFileDefaultName);
-            linkElement.click();
-        }
-
-        // Event listeners
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('courseForm').addEventListener('submit', addOrUpdateCourse);
-            
-            window.onclick = function(event) {
-                const modal = document.getElementById('courseModal');
-                if (event.target === modal) {
-                    closeModal();
-                }
-            }
-            
-            // Initialize the table after DOM is loaded
-            renderTable();
-        });
-    </script>
 </body>
 </html>
